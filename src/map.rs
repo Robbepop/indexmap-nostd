@@ -11,7 +11,7 @@ use core::slice::Iter as SliceIter;
 use core::slice::IterMut as SliceIterMut;
 
 /// A slot index referencing a [`Slot`] in an [`IndexMap`].
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct SlotIndex(usize);
 
 impl SlotIndex {
@@ -43,7 +43,7 @@ impl SlotIndex {
 ///
 /// [`indexmap` crate]: https://crates.io/crates/indexmap
 /// [`wasmparser-nostd` crate]: https://crates.io/crates/wasmparser-nostd
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IndexMap<K, V> {
     /// A mapping from keys to slot indices.
     key2slot: BTreeMap<K, SlotIndex>,
@@ -51,7 +51,7 @@ pub struct IndexMap<K, V> {
     slots: Vec<Slot<K, V>>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct Slot<K, V> {
     /// The key of the [`Slot`].
     key: K,

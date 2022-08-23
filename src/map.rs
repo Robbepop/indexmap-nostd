@@ -234,6 +234,29 @@ where
     }
 }
 
+impl<K, V> FromIterator<(K, V)> for IndexMap<K, V>
+where
+    K: Ord + Clone,
+{
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = (K, V)>,
+    {
+        let mut map = IndexMap::new();
+        map.extend(iter);
+        map
+    }
+}
+
+impl<K, V, const N: usize> From<[(K, V); N]> for IndexMap<K, V>
+where
+    K: Ord + Clone,
+{
+    fn from(items: [(K, V); N]) -> Self {
+        items.into_iter().collect()
+    }
+}
+
 impl<'a, K, V> IntoIterator for &'a IndexMap<K, V> {
     type Item = (&'a K, &'a V);
     type IntoIter = Iter<'a, K, V>;

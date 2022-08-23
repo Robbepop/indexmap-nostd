@@ -21,7 +21,7 @@ jobs:
         with:
           command: check
 
-  test:
+  build:
     name: Build (no_std)
     strategy:
       matrix:

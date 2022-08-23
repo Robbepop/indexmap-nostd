@@ -207,6 +207,33 @@ where
     }
 }
 
+impl<'a, K, V> Extend<(&'a K, &'a V)> for IndexMap<K, V>
+where
+    K: Ord + Copy,
+    V: Copy,
+{
+    fn extend<T>(&mut self, iter: T)
+    where
+        T: IntoIterator<Item = (&'a K, &'a V)>,
+    {
+        self.extend(iter.into_iter().map(|(key, value)| (*key, *value)))
+    }
+}
+
+impl<K, V> Extend<(K, V)> for IndexMap<K, V>
+where
+    K: Ord + Clone,
+{
+    fn extend<T>(&mut self, iter: T)
+    where
+        T: IntoIterator<Item = (K, V)>,
+    {
+        iter.into_iter().for_each(move |(k, v)| {
+            self.insert(k, v);
+        });
+    }
+}
+
 impl<'a, K, V> IntoIterator for &'a IndexMap<K, V> {
     type Item = (&'a K, &'a V);
     type IntoIter = Iter<'a, K, V>;

@@ -36,10 +36,12 @@ jobs:
           override: true
       - uses: actions-rs/cargo@v1
         with:
-          command: build --no-default-features --target thumbv7em-none-eabi
+          command: build
+          args: --no-default-features --target thumbv7em-none-eabi
       - uses: actions-rs/cargo@v1
         with:
-          command: build --no-default-features --target wasm-unknown-unknown
+          command: build
+          args: --no-default-features --target wasm-unknown-unknown
 
   test:
     name: Test

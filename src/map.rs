@@ -1,3 +1,5 @@
+//! An ordered map based on a B-Tree that keeps insertion order of elements.
+
 use alloc::collections::{btree_map, BTreeMap};
 use alloc::vec::Vec;
 use core::borrow::Borrow;

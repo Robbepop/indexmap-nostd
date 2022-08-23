@@ -3,7 +3,7 @@
 A `no_std` compatible [`indexmap` crate] (re)implementation.
 
 **Note:** The [`indexmap` crate] already supports to be compiled in
-`no_std` environments and it uses [`hashbrown::HashMap`] under the
+`no_std` environments and it uses [`hashbrown` crate]'s `HashMap` under the
 hood which still requires some sort of randomized initialization.
 However, some embedded platforms simply cannot provide ways to randomly
 seed hash maps and similar data structures making code that depends on it
@@ -33,3 +33,4 @@ environment without the need to provide random seeds for `HashMap` initializatio
 
 [`indexmap` crate]: https://www.crates.io/crates/indexmap
 [`wasmparser` crate]: https://www.crates.io/crates/wasmparser-nostd
+[`hashbrown` crate]: https://www.crates.io/crates/hashbrown

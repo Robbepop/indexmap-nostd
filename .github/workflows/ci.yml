@@ -43,7 +43,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --no-default-features --target wasm-unknown-unknown
+          args: --no-default-features --target wasm32-unknown-unknown
 
   test:
     name: Test

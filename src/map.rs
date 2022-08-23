@@ -194,7 +194,6 @@ impl<K, V> IndexMap<K, V> {
     }
 }
 
-
 impl<'a, K, Q, V> Index<&'a Q> for IndexMap<K, V>
 where
     K: Borrow<Q> + Ord,

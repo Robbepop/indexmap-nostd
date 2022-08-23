@@ -22,36 +22,6 @@ impl SlotIndex {
     }
 }
 
-/// A hash table where the iteration order of the key-value
-/// pairs is independent of the hash values of the keys.
-///
-/// The interface is closely compatible with the [`indexmap` crate]
-/// and a subset of the features that is relevant for the
-/// [`wasmparser-nostd` crate].
-///
-/// # Differences to original IndexMap
-///
-/// Since the goal of this crate was to maintain a simple
-/// `no_std` compatible fork of the [`indexmap` crate] there are some
-/// downsides and differences.
-///
-/// - Some operations such as `IndexMap::insert` now require `K: Clone`.
-/// - It is to be expected that this fork performs worse than the original
-/// [`indexmap` crate] implementation.
-/// - The implementation is based on `BTreeMap` internally instead of
-/// `HashMap` which has the effect that methods no longer require `K: Hash`
-/// but `K: Ord` instead.
-///
-/// [`indexmap` crate]: https://crates.io/crates/indexmap
-/// [`wasmparser-nostd` crate]: https://crates.io/crates/wasmparser-nostd
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct IndexMap<K, V> {
-    /// A mapping from keys to slot indices.
-    key2slot: BTreeMap<K, SlotIndex>,
-    /// A vector holding all slots of key value pairs.
-    slots: Vec<Slot<K, V>>,
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct Slot<K, V> {
     /// The key of the [`Slot`].
@@ -80,6 +50,36 @@ impl<K, V> Slot<K, V> {
     pub fn into_pair(self) -> (K, V) {
         (self.key, self.value)
     }
+}
+
+/// A hash table where the iteration order of the key-value
+/// pairs is independent of the hash values of the keys.
+///
+/// The interface is closely compatible with the [`indexmap` crate]
+/// and a subset of the features that is relevant for the
+/// [`wasmparser-nostd` crate].
+///
+/// # Differences to original IndexMap
+///
+/// Since the goal of this crate was to maintain a simple
+/// `no_std` compatible fork of the [`indexmap` crate] there are some
+/// downsides and differences.
+///
+/// - Some operations such as `IndexMap::insert` now require `K: Clone`.
+/// - It is to be expected that this fork performs worse than the original
+/// [`indexmap` crate] implementation.
+/// - The implementation is based on `BTreeMap` internally instead of
+/// `HashMap` which has the effect that methods no longer require `K: Hash`
+/// but `K: Ord` instead.
+///
+/// [`indexmap` crate]: https://crates.io/crates/indexmap
+/// [`wasmparser-nostd` crate]: https://crates.io/crates/wasmparser-nostd
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct IndexMap<K, V> {
+    /// A mapping from keys to slot indices.
+    key2slot: BTreeMap<K, SlotIndex>,
+    /// A vector holding all slots of key value pairs.
+    slots: Vec<Slot<K, V>>,
 }
 
 impl<K, V> Default for IndexMap<K, V> {

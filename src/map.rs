@@ -559,7 +559,7 @@ where
         let index = self.slots.len();
         let key = self.vacant.key().clone();
         self.vacant.insert(SlotIndex(index));
-        self.slots.push(Slot::new(key.clone(), value));
+        self.slots.push(Slot::new(key, value));
         &mut self.slots[index].value
     }
 }

@@ -148,18 +148,14 @@ impl<K, V> IndexMap<K, V> {
         K: Ord + Clone,
     {
         match self.key2slot.entry(key) {
-            btree_map::Entry::Vacant(entry) => {
-                Entry::Vacant(VacantEntry {
-                    vacant: entry,
-                    slots: &mut self.slots
-                })
-            }
-            btree_map::Entry::Occupied(entry) => {
-                Entry::Occupied(OccupiedEntry {
-                    occupied: entry,
-                    slots: &mut self.slots,
-                })
-            }
+            btree_map::Entry::Vacant(entry) => Entry::Vacant(VacantEntry {
+                vacant: entry,
+                slots: &mut self.slots,
+            }),
+            btree_map::Entry::Occupied(entry) => Entry::Occupied(OccupiedEntry {
+                occupied: entry,
+                slots: &mut self.slots,
+            }),
         }
     }
 

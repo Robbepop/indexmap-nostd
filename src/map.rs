@@ -1,6 +1,7 @@
 //! An ordered map based on a B-Tree that keeps insertion order of elements.
 
 use alloc::collections::{btree_map, BTreeMap};
+use alloc::vec::IntoIter as VecIntoIter;
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::fmt;
@@ -73,6 +74,11 @@ impl<K, V> Slot<K, V> {
     /// Returns the [`Slot`] as a pair of references to its `key` and `value`.
     pub fn as_pair_mut(&mut self) -> (&K, &mut V) {
         (&self.key, &mut self.value)
+    }
+
+    /// Converts the [`Slot`] into a pair of its `key` and `value`.
+    pub fn into_pair(self) -> (K, V) {
+        (self.key, self.value)
     }
 }
 
@@ -274,6 +280,17 @@ impl<'a, K, V> IntoIterator for &'a mut IndexMap<K, V> {
     }
 }
 
+impl<K, V> IntoIterator for IndexMap<K, V> {
+    type Item = (K, V);
+    type IntoIter = IntoIter<K, V>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter {
+            iter: self.slots.into_iter(),
+        }
+    }
+}
+
 /// An iterator over the entries of an [`IndexMap`].
 ///
 /// This `struct` is created by the [`iter`] method on [`IndexMap`]. See its
@@ -355,6 +372,48 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
 }
 
 impl<'a, K, V> FusedIterator for IterMut<'a, K, V> {}
+
+/// An owning iterator over the entries of a [`IndexMap`].
+///
+/// This `struct` is created by the [`into_iter`] method on [`IndexMap`]
+/// (provided by the [`IntoIterator`] trait). See its documentation for more.
+///
+/// [`into_iter`]: IntoIterator::into_iter
+/// [`IntoIterator`]: core::iter::IntoIterator
+#[derive(Debug)]
+pub struct IntoIter<K, V> {
+    iter: VecIntoIter<Slot<K, V>>,
+}
+
+impl<K, V> Iterator for IntoIter<K, V> {
+    type Item = (K, V);
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.iter.size_hint()
+    }
+
+    fn count(self) -> usize {
+        self.iter.count()
+    }
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(Slot::into_pair)
+    }
+}
+
+impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.iter.next_back().map(Slot::into_pair)
+    }
+}
+
+impl<K, V> ExactSizeIterator for IntoIter<K, V> {
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
+impl<K, V> FusedIterator for IntoIter<K, V> {}
 
 /// A view into a single entry in a map, which may either be vacant or occupied.
 ///

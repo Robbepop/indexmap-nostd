@@ -210,6 +210,8 @@ impl<T> IntoIterator for IndexSet<T> {
 /// An iterator over the items of a [`IndexSet`].
 ///
 /// This `struct` is created by the [`iter`] method on [`IndexSet`].
+///
+/// [`iter`]: IndexSet::iter
 #[derive(Debug, Clone)]
 pub struct Iter<'a, T> {
     iter: SliceIter<'a, T>,
@@ -243,11 +245,15 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {
     }
 }
 
+impl<'a, T> FusedIterator for Iter<'a, T> {}
+
 /// An owning iterator over the items of a [`IndexSet`].
 ///
 /// This `struct` is created by the [`into_iter`] method on [`IndexSet`]
 /// (provided by the [`IntoIterator`] trait).
-impl<'a, T> FusedIterator for Iter<'a, T> {}
+///
+/// [`into_iter`]: IntoIterator::into_iter
+/// [`IntoIterator`]: core::iter::IntoIterator
 #[derive(Debug)]
 pub struct IntoIter<T> {
     iter: VecIntoIter<T>,

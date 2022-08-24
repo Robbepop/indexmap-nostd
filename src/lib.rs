@@ -7,8 +7,10 @@ extern crate std as alloc;
 extern crate alloc;
 
 pub mod map;
+pub mod set;
 
 pub use self::map::IndexMap;
+pub use self::set::IndexSet;
 
 /// A slot index referencing a [`Slot`] in an [`IndexMap`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]

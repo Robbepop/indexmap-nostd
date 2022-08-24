@@ -49,7 +49,7 @@ impl<K, V> Slot<K, V> {
 /// and a subset of the features that is relevant for the
 /// [`wasmparser-nostd` crate].
 ///
-/// # Differences to original IndexMap
+/// # Differences to original `IndexMap`
 ///
 /// Since the goal of this crate was to maintain a simple
 /// `no_std` compatible fork of the [`indexmap` crate] there are some

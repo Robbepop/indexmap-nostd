@@ -8,6 +8,28 @@ use core::borrow::Borrow;
 use core::iter::FusedIterator;
 use core::slice::Iter as SliceIter;
 
+/// A b-tree set where the iteration order of the values
+/// is independent of the ordering of the values.
+///
+/// The interface is closely compatible with the [`indexmap` crate]
+/// and a subset of the features that is relevant for the
+/// [`wasmparser-nostd` crate].
+///
+/// # Differences to original `IndexSet`
+///
+/// Since the goal of this crate was to maintain a simple
+/// `no_std` compatible fork of the [`indexmap` crate] there are some
+/// downsides and differences.
+///
+/// - Some operations such as `IndexSet::insert` now require `K: Clone`.
+/// - It is to be expected that this fork performs worse than the original
+/// [`indexmap` crate] implementation.
+/// - The implementation is based on `BTreeMap` internally instead of
+/// `HashMap` which has the effect that methods no longer require `K: Hash`
+/// but `K: Ord` instead.
+///
+/// [`indexmap` crate]: https://crates.io/crates/indexmap
+/// [`wasmparser-nostd` crate]: https://crates.io/crates/wasmparser-nostd
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IndexSet<T> {
     /// A mapping from keys to slot indices.

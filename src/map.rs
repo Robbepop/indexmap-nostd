@@ -1,5 +1,6 @@
 //! An ordered map based on a B-Tree that keeps insertion order of elements.
 
+use super::SlotIndex;
 use alloc::collections::{btree_map, BTreeMap};
 use alloc::vec::IntoIter as VecIntoIter;
 use alloc::vec::Vec;
@@ -10,17 +11,6 @@ use core::mem::replace;
 use core::ops::Index;
 use core::slice::Iter as SliceIter;
 use core::slice::IterMut as SliceIterMut;
-
-/// A slot index referencing a [`Slot`] in an [`IndexMap`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-struct SlotIndex(usize);
-
-impl SlotIndex {
-    /// Returns the raw `usize` index of the [`SlotIndex`].
-    pub fn index(self) -> usize {
-        self.0
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct Slot<K, V> {

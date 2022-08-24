@@ -65,6 +65,34 @@ impl<T> IndexSet<T> {
         self.len() != 0
     }
 
+    /// Returns `true` if `self` has no elements in common with `other`.
+    /// This is equivalent to checking for an empty intersection.
+    pub fn is_disjoint(&self, other: &Self) -> bool
+    where
+        T: Ord,
+    {
+        self.iter().all(|value| !other.contains(value))
+            && other.iter().all(|value| !self.contains(value))
+    }
+
+    /// Returns `true` if the set is a subset of another,
+    /// i.e., `other` contains at least all the elements in `self`.
+    pub fn is_subset(&self, other: &Self) -> bool
+    where
+        T: Ord,
+    {
+        self.iter().all(|value| other.contains(value))
+    }
+
+    /// Returns `true` if the set is a superset of another,
+    /// i.e., `self` contains at least all the elements in `other`.
+    pub fn is_superset(&self, other: &Self) -> bool
+    where
+        T: Ord,
+    {
+        other.is_subset(self)
+    }
+
     /// Returns `true` if the set contains an element equal to the value.
     ///
     /// The value may be any borrowed form of the set's element type,

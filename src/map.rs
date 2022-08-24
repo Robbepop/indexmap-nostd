@@ -40,6 +40,16 @@ impl<K, V> Slot<K, V> {
     pub fn into_pair(self) -> (K, V) {
         (self.key, self.value)
     }
+
+    /// Returns a shared reference to the value of the [`Slot`].
+    pub fn value(&self) -> &V {
+        &self.value
+    }
+
+    /// Returns an exclusive reference to the value of the [`Slot`].
+    pub fn value_mut(&mut self) -> &mut V {
+        &mut self.value
+    }
 }
 
 /// A b-tree map where the iteration order of the key-value
@@ -179,6 +189,20 @@ impl<K, V> IndexMap<K, V> {
     /// Gets a mutable iterator over the entries of the map, sorted by key.
     pub fn iter_mut(&mut self) -> IterMut<K, V> {
         IterMut {
+            iter: self.slots.iter_mut(),
+        }
+    }
+
+    /// Gets an iterator over the values of the map, in order by key.
+    pub fn values(&self) -> Values<K, V> {
+        Values {
+            iter: self.slots.iter(),
+        }
+    }
+
+    /// Gets a mutable iterator over the values of the map, in order by key.
+    pub fn values_mut(&mut self) -> ValuesMut<K, V> {
+        ValuesMut {
             iter: self.slots.iter_mut(),
         }
     }
@@ -404,6 +428,88 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {
 }
 
 impl<K, V> FusedIterator for IntoIter<K, V> {}
+
+/// An iterator over the values of an [`IndexMap`].
+///
+/// This `struct` is created by the [`values`] method on [`IndexMap`]. See its
+/// documentation for more.
+///
+/// [`values`]: IndexMap::values
+#[derive(Debug, Clone)]
+pub struct Values<'a, K, V> {
+    iter: SliceIter<'a, Slot<K, V>>,
+}
+
+impl<'a, K, V> Iterator for Values<'a, K, V> {
+    type Item = &'a V;
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.iter.size_hint()
+    }
+
+    fn count(self) -> usize {
+        self.iter.count()
+    }
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(Slot::value)
+    }
+}
+
+impl<'a, K, V> DoubleEndedIterator for Values<'a, K, V> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.iter.next_back().map(Slot::value)
+    }
+}
+
+impl<'a, K, V> ExactSizeIterator for Values<'a, K, V> {
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
+impl<'a, K, V> FusedIterator for Values<'a, K, V> {}
+
+/// An iterator over the values of an [`IndexMap`].
+///
+/// This `struct` is created by the [`values`] method on [`IndexMap`]. See its
+/// documentation for more.
+///
+/// [`values`]: IndexMap::values
+#[derive(Debug)]
+pub struct ValuesMut<'a, K, V> {
+    iter: SliceIterMut<'a, Slot<K, V>>,
+}
+
+impl<'a, K, V> Iterator for ValuesMut<'a, K, V> {
+    type Item = &'a mut V;
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.iter.size_hint()
+    }
+
+    fn count(self) -> usize {
+        self.iter.count()
+    }
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(Slot::value_mut)
+    }
+}
+
+impl<'a, K, V> DoubleEndedIterator for ValuesMut<'a, K, V> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.iter.next_back().map(Slot::value_mut)
+    }
+}
+
+impl<'a, K, V> ExactSizeIterator for ValuesMut<'a, K, V> {
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
+impl<'a, K, V> FusedIterator for ValuesMut<'a, K, V> {}
 
 /// A view into a single entry in a map, which may either be vacant or occupied.
 ///

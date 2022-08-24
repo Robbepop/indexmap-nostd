@@ -42,8 +42,8 @@ impl<K, V> Slot<K, V> {
     }
 }
 
-/// A hash table where the iteration order of the key-value
-/// pairs is independent of the hash values of the keys.
+/// A b-tree map where the iteration order of the key-value
+/// pairs is independent of the ordering of the keys.
 ///
 /// The interface is closely compatible with the [`indexmap` crate]
 /// and a subset of the features that is relevant for the

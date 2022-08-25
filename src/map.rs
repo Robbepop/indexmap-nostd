@@ -297,6 +297,26 @@ where
     }
 }
 
+impl<K, V> Index<usize> for IndexMap<K, V> {
+    type Output = V;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        let (_key, value) = self
+            .get_index(index)
+            .expect("IndexMap: index out of bounds");
+        value
+    }
+}
+
+impl<K, V> IndexMut<usize> for IndexMap<K, V> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let (_key, value) = self
+            .get_index_mut(index)
+            .expect("IndexMap: index out of bounds");
+        value
+    }
+}
+
 impl<'a, K, V> Extend<(&'a K, &'a V)> for IndexMap<K, V>
 where
     K: Ord + Copy,

@@ -137,6 +137,39 @@ impl<T> IndexSet<T> {
             .map(|index| &self.slots[index.index()])
     }
 
+    /// Returns the index-value pair corresponding to the supplied value.
+    ///
+    /// The supplied key may be any borrowed form of the map's key type,
+    /// but the ordering on the borrowed form *must* match the ordering
+    /// on the key type.
+    pub fn get_full<Q: ?Sized>(&self, key: &Q) -> Option<(usize, &T)>
+    where
+        T: Borrow<Q> + Ord,
+        Q: Ord,
+    {
+        self.key2slot
+            .get_key_value(key)
+            .map(|(key, slot)| (slot.index(), key))
+    }
+
+    /// Returns the unique index corresponding to the supplied value.
+    ///
+    /// The supplied key may be any borrowed form of the map's key type,
+    /// but the ordering on the borrowed form *must* match the ordering
+    /// on the key type.
+    pub fn get_index_of<Q: ?Sized>(&self, key: &Q) -> Option<usize>
+    where
+        T: Borrow<Q> + Ord,
+        Q: Ord,
+    {
+        self.key2slot.get(key).copied().map(SlotIndex::index)
+    }
+
+    /// Returns a shared reference to the value at the given index.
+    pub fn get_index(&self, index: usize) -> Option<&T> {
+        self.slots.get(index)
+    }
+
     /// Adds a value to the set.
     ///
     /// Returns whether the value was newly inserted. That is:

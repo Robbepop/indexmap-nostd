@@ -12,7 +12,7 @@ pub mod set;
 pub use self::map::IndexMap;
 pub use self::set::IndexSet;
 
-/// A slot index referencing a [`Slot`] in an [`IndexMap`].
+/// A slot index referencing a slot in an [`IndexMap`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct SlotIndex(usize);
 

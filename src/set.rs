@@ -55,6 +55,21 @@ impl<T> IndexSet<T> {
         }
     }
 
+    /// Constructs a new, empty [`IndexSet`] with at least the specified capacity.
+    ///
+    /// Does not allocate if `capacity` is zero.
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            key2slot: BTreeMap::new(),
+            slots: Vec::with_capacity(capacity),
+        }
+    }
+
+    /// Reserve capacity for at least `additional` more values.
+    pub fn reserve(&mut self, additional: usize) {
+        self.slots.reserve(additional);
+    }
+
     /// Returns the number of elements in the set.
     pub fn len(&self) -> usize {
         self.slots.len()

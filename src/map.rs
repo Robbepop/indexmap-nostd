@@ -89,7 +89,7 @@ impl<K, V> Default for IndexMap<K, V> {
 }
 
 impl<K, V> IndexMap<K, V> {
-    /// Makes a new, empty `IndexMap`.
+    /// Makes a new, empty [`IndexMap`].
     ///
     /// Does not allocate anything on its own.
     pub fn new() -> Self {
@@ -97,6 +97,21 @@ impl<K, V> IndexMap<K, V> {
             key2slot: BTreeMap::new(),
             slots: Vec::new(),
         }
+    }
+
+    /// Constructs a new, empty [`IndexMap`] with at least the specified capacity.
+    ///
+    /// Does not allocate if `capacity` is zero.
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            key2slot: BTreeMap::new(),
+            slots: Vec::with_capacity(capacity),
+        }
+    }
+
+    /// Reserve capacity for at least `additional` more key-value pairs.
+    pub fn reserve(&mut self, additional: usize) {
+        self.slots.reserve(additional);
     }
 
     /// Returns the number of elements in the map.

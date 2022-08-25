@@ -6,6 +6,7 @@ use alloc::vec::IntoIter as VecIntoIter;
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::iter::FusedIterator;
+use core::ops::Index;
 use core::slice::Iter as SliceIter;
 
 /// A b-tree set where the iteration order of the values
@@ -210,6 +211,15 @@ impl<T> IndexSet<T> {
     pub fn clear(&mut self) {
         self.key2slot.clear();
         self.slots.clear();
+    }
+}
+
+impl<T> Index<usize> for IndexSet<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.get_index(index)
+            .expect("IndexSet: index out of bounds")
     }
 }
 

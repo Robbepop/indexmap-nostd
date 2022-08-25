@@ -194,6 +194,21 @@ impl<K, V> IndexMap<K, V> {
             .map(|slot| &self.slots[slot.index()].value)
     }
 
+    /// Returns the key-value pair corresponding to the supplied key.
+    ///
+    /// The supplied key may be any borrowed form of the map's key type,
+    /// but the ordering on the borrowed form *must* match the ordering
+    /// on the key type.
+    pub fn get_key_value<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)>
+    where
+        K: Borrow<Q> + Ord,
+        Q: Ord,
+    {
+        self.key2slot
+            .get_key_value(key)
+            .map(|(key, slot)| (key, &self.slots[slot.index()].value))
+    }
+
     /// Gets an iterator over the entries of the map, sorted by key.
     pub fn iter(&self) -> Iter<K, V> {
         Iter {

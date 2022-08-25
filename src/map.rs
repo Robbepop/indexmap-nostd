@@ -8,7 +8,7 @@ use core::borrow::Borrow;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::mem::replace;
-use core::ops::Index;
+use core::ops::{Index, IndexMut};
 use core::slice::Iter as SliceIter;
 use core::slice::IterMut as SliceIterMut;
 
@@ -207,6 +207,47 @@ impl<K, V> IndexMap<K, V> {
         self.key2slot
             .get_key_value(key)
             .map(|(key, slot)| (key, &self.slots[slot.index()].value))
+    }
+
+    /// Returns the key-value pair corresponding to the supplied key
+    /// as well as the unique index of the returned key-value pair.
+    ///
+    /// The supplied key may be any borrowed form of the map's key type,
+    /// but the ordering on the borrowed form *must* match the ordering
+    /// on the key type.
+    pub fn get_full<Q: ?Sized>(&self, key: &Q) -> Option<(usize, &K, &V)>
+    where
+        K: Borrow<Q> + Ord,
+        Q: Ord,
+    {
+        self.key2slot.get_key_value(key).map(|(key, slot)| {
+            let index = slot.index();
+            let value = &self.slots[index].value;
+            (index, key, value)
+        })
+    }
+
+    /// Returns the unique index corresponding to the supplied key.
+    ///
+    /// The supplied key may be any borrowed form of the map's key type,
+    /// but the ordering on the borrowed form *must* match the ordering
+    /// on the key type.
+    pub fn get_index_of<Q: ?Sized>(&self, key: &Q) -> Option<usize>
+    where
+        K: Borrow<Q> + Ord,
+        Q: Ord,
+    {
+        self.key2slot.get(key).copied().map(SlotIndex::index)
+    }
+
+    /// Returns a shared reference to the key-value pair at the given index.
+    pub fn get_index(&self, index: usize) -> Option<(&K, &V)> {
+        self.slots.get(index).map(Slot::as_pair)
+    }
+
+    /// Returns an exclusive reference to the key-value pair at the given index.
+    pub fn get_index_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        self.slots.get_mut(index).map(Slot::as_pair_mut)
     }
 
     /// Gets an iterator over the entries of the map, sorted by key.

@@ -183,17 +183,34 @@ impl<T> IndexSet<T> {
     where
         T: Ord + Clone,
     {
+        let (_index, inserted) = self.insert_full(value);
+        inserted
+    }
+
+    /// Adds a value to the set.
+    ///
+    /// Returns the unique index to the value as well as a `bool` flag telling
+    /// whether the value was newly inserted. That is:
+    ///
+    /// - If the set did not previously contain an equal value, `true` is
+    ///   returned.
+    /// - If the set already contained an equal value, `false` is returned, and
+    ///   the entry is not updated.
+    pub fn insert_full(&mut self, value: T) -> (usize, bool)
+    where
+        T: Ord + Clone,
+    {
         match self.key2slot.entry(value.clone()) {
             btree_map::Entry::Vacant(entry) => {
-                let new_slot = self.slots.len();
-                entry.insert(SlotIndex(new_slot));
+                let index = self.slots.len();
+                entry.insert(SlotIndex(index));
                 self.slots.push(value);
-                true
+                (index, true)
             }
             btree_map::Entry::Occupied(entry) => {
                 let index = entry.get().index();
                 self.slots[index] = value;
-                false
+                (index, false)
             }
         }
     }

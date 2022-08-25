@@ -149,7 +149,6 @@ impl<K, V> IndexMap<K, V> {
     {
         self.insert_full(key, value)
             .map(|(_index, old_value)| old_value)
-        }
     }
 
     /// Inserts a key-value pair into the map.

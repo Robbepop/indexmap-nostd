@@ -43,6 +43,12 @@ extern crate alloc;
 pub mod map;
 pub mod set;
 
+#[cfg(feature = "serde")]
+mod serde;
+
+#[cfg(feature = "serde")]
+pub mod serde_seq;
+
 pub use self::map::IndexMap;
 pub use self::set::IndexSet;
 
